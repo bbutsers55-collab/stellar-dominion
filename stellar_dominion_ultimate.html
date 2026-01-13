@@ -1,0 +1,1675 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stellar Dominion - Ultimate Edition</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1a3e 50%, #0f0f23 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(0, 100, 255, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(138, 43, 226, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            text-align: center;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5em;
+            font-weight: 900;
+            background: linear-gradient(135deg, #00ffff 0%, #0099ff 50%, #00ffff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+            margin-bottom: 30px;
+            letter-spacing: 3px;
+        }
+
+        .game-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 25px;
+        }
+
+        .panel {
+            background: rgba(15, 25, 45, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .panel:hover {
+            border-color: rgba(0, 255, 255, 0.6);
+            box-shadow: 0 8px 32px rgba(0, 255, 255, 0.2);
+        }
+
+        .panel h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: #00ffff;
+            font-size: 1.4em;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid rgba(0, 255, 255, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .stat-line {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 15px;
+            margin: 8px 0;
+            background: rgba(0, 40, 80, 0.3);
+            border-radius: 10px;
+            border-left: 3px solid #00ffff;
+            transition: all 0.3s;
+        }
+
+        .stat-line:hover {
+            background: rgba(0, 60, 100, 0.4);
+            transform: translateX(5px);
+        }
+
+        .stat-label {
+            color: #88ddff;
+            font-weight: 600;
+        }
+
+        .stat-value {
+            color: #ffcc00;
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+
+        button {
+            background: linear-gradient(135deg, #0066cc 0%, #0099ff 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 10px;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            font-size: 1em;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 102, 204, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #0099ff 0%, #00ccff 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 153, 255, 0.6);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background: linear-gradient(135deg, #333 0%, #555 100%);
+            cursor: not-allowed;
+            opacity: 0.5;
+            box-shadow: none;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #00aa44 0%, #00dd66 100%);
+            box-shadow: 0 4px 15px rgba(0, 170, 68, 0.4);
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, #00dd66 0%, #00ff88 100%);
+            box-shadow: 0 6px 20px rgba(0, 221, 102, 0.6);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #cc0066 0%, #ff0088 100%);
+            box-shadow: 0 4px 15px rgba(204, 0, 102, 0.4);
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #ff0088 0%, #ff00aa 100%);
+            box-shadow: 0 6px 20px rgba(255, 0, 136, 0.6);
+        }
+
+        .log {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            height: 220px;
+            overflow-y: auto;
+            font-size: 0.95em;
+            margin-top: 15px;
+        }
+
+        .log::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .log::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+
+        .log::-webkit-scrollbar-thumb {
+            background: rgba(0, 255, 255, 0.5);
+            border-radius: 10px;
+        }
+
+        .log-entry {
+            padding: 6px 10px;
+            margin: 3px 0;
+            border-radius: 5px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .log-positive { 
+            background: rgba(0, 255, 136, 0.1);
+            border-left: 3px solid #00ff88;
+            color: #00ff88;
+        }
+
+        .log-negative { 
+            background: rgba(255, 68, 68, 0.1);
+            border-left: 3px solid #ff4444;
+            color: #ff4444;
+        }
+
+        .log-neutral { 
+            background: rgba(136, 255, 255, 0.1);
+            border-left: 3px solid #88ffff;
+            color: #88ffff;
+        }
+
+        .log-warning { 
+            background: rgba(255, 170, 0, 0.1);
+            border-left: 3px solid #ffaa00;
+            color: #ffaa00;
+        }
+
+        .ship-item {
+            background: linear-gradient(135deg, rgba(0, 40, 80, 0.5) 0%, rgba(0, 60, 100, 0.3) 100%);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            transition: all 0.3s;
+        }
+
+        .ship-item:hover {
+            transform: translateX(5px);
+            border-color: rgba(0, 255, 255, 0.6);
+            box-shadow: 0 4px 20px rgba(0, 255, 255, 0.2);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, rgba(15, 25, 45, 0.95) 0%, rgba(20, 30, 60, 0.95) 100%);
+            border: 2px solid rgba(0, 255, 255, 0.5);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 700px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 255, 255, 0.3);
+            animation: modalSlideIn 0.4s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .ship-modal-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            border: 2px solid rgba(0, 255, 255, 0.3);
+        }
+
+        .ship-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .ship-stat {
+            text-align: center;
+            padding: 15px;
+            background: rgba(0, 40, 80, 0.4);
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+        }
+
+        .ship-stat-value {
+            font-size: 2em;
+            font-weight: 700;
+            color: #00ffff;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .ship-stat-label {
+            color: #88ddff;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .close-modal {
+            float: right;
+            font-size: 2em;
+            cursor: pointer;
+            color: #ff4444;
+            transition: all 0.3s;
+        }
+
+        .close-modal:hover {
+            color: #ff0000;
+            transform: rotate(90deg);
+        }
+
+        .animation-container {
+            width: 100%;
+            height: 250px;
+            background: radial-gradient(circle at center, rgba(0, 40, 80, 0.5) 0%, rgba(0, 0, 0, 0.3) 100%);
+            border-radius: 15px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+        }
+
+        .trading-animation {
+            position: absolute;
+            width: 60px;
+            height: 40px;
+            background: linear-gradient(135deg, #00ffff 0%, #0099ff 100%);
+            clip-path: polygon(0% 50%, 20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%);
+            animation: trading 3s infinite;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
+        }
+
+        @keyframes trading {
+            0%, 100% { left: 10%; top: 50%; transform: translateY(-50%); }
+            50% { left: 80%; top: 50%; transform: translateY(-50%) rotateY(180deg); }
+        }
+
+        .scanning-animation {
+            position: absolute;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent 0%, #00ffff 50%, transparent 100%);
+            animation: scan 2s infinite;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+        }
+
+        @keyframes scan {
+            0% { top: 0%; }
+            100% { top: 100%; }
+        }
+
+        .travel-animation {
+            position: absolute;
+            width: 50px;
+            height: 30px;
+            background: linear-gradient(135deg, #ff00ff 0%, #00ffff 100%);
+            clip-path: polygon(0% 50%, 30% 0%, 100% 50%, 30% 100%);
+            animation: travel 2s infinite;
+            box-shadow: 0 0 30px rgba(255, 0, 255, 0.6);
+        }
+
+        @keyframes travel {
+            0% { left: -10%; top: 50%; transform: translateY(-50%); }
+            100% { left: 110%; top: 50%; transform: translateY(-50%); }
+        }
+
+        .building-animation {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 100px;
+            background: linear-gradient(180deg, transparent 0%, rgba(0, 255, 136, 0.3) 50%, rgba(0, 255, 136, 0.6) 100%);
+            border: 2px solid #00ff88;
+            border-radius: 5px;
+            animation: building 1.5s infinite;
+        }
+
+        @keyframes building {
+            0% { height: 0px; opacity: 0; }
+            100% { height: 100px; opacity: 1; }
+        }
+
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .faction {
+            padding: 15px;
+            margin: 12px 0;
+            background: linear-gradient(135deg, rgba(0, 40, 80, 0.4) 0%, rgba(0, 20, 40, 0.4) 100%);
+            border-left: 4px solid;
+            border-radius: 10px;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .faction:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .faction-federation { border-color: #4444ff; }
+        .faction-consortium { border-color: #ffaa00; }
+        .faction-alliance { border-color: #00ff00; }
+        .faction-syndicate { border-color: #ff0066; }
+        .faction-collective { border-color: #aa00ff; }
+
+        .allied-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(135deg, #00ff88 0%, #00cc66 100%);
+            color: #000;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .reputation-meter {
+            height: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+            margin: 8px 0;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .reputation-fill {
+            height: 100%;
+            transition: width 0.5s ease, background 0.5s ease;
+            border-radius: 5px;
+        }
+
+        .trade-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            margin: 10px 0;
+            background: linear-gradient(135deg, rgba(0, 60, 0, 0.3) 0%, rgba(0, 40, 0, 0.3) 100%);
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            transition: all 0.3s;
+        }
+
+        .trade-item:hover {
+            border-color: rgba(0, 255, 136, 0.5);
+            transform: translateX(5px);
+        }
+
+        .mission {
+            background: linear-gradient(135deg, rgba(100, 50, 0, 0.4) 0%, rgba(80, 40, 0, 0.3) 100%);
+            padding: 20px;
+            margin: 12px 0;
+            border-radius: 12px;
+            border-left: 4px solid #ffaa00;
+            transition: all 0.3s;
+        }
+
+        .mission:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 20px rgba(255, 170, 0, 0.2);
+        }
+
+        .sector-info {
+            background: linear-gradient(135deg, rgba(0, 60, 100, 0.4) 0%, rgba(0, 40, 80, 0.3) 100%);
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 136, 255, 0.3);
+            transition: all 0.3s;
+        }
+
+        .sector-info:hover {
+            border-color: rgba(0, 136, 255, 0.6);
+            box-shadow: 0 4px 20px rgba(0, 136, 255, 0.2);
+        }
+
+        .resource-bar {
+            background: rgba(0, 0, 0, 0.5);
+            height: 25px;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 10px 0;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+        }
+
+        .resource-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff88 0%, #00ffff 100%);
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+
+        .manager-item {
+            background: linear-gradient(135deg, rgba(80, 0, 80, 0.4) 0%, rgba(60, 0, 60, 0.3) 100%);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            border: 1px solid rgba(170, 0, 255, 0.3);
+        }
+
+        .ai-player {
+            background: rgba(100, 0, 0, 0.3);
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 8px;
+            border-left: 3px solid #ff4444;
+            font-size: 0.9em;
+        }
+
+        input, select {
+            background: rgba(0, 40, 80, 0.5);
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            color: #fff;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1em;
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: rgba(0, 255, 255, 0.8);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+        }
+
+        .new-game-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .new-game-panel {
+            background: linear-gradient(135deg, rgba(15, 25, 45, 0.98) 0%, rgba(20, 30, 60, 0.98) 100%);
+            border: 3px solid rgba(0, 255, 255, 0.6);
+            border-radius: 20px;
+            padding: 50px;
+            max-width: 600px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 255, 255, 0.4);
+        }
+
+        .difficulty-option {
+            background: rgba(0, 40, 80, 0.4);
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 12px;
+            border: 2px solid rgba(0, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .difficulty-option:hover, .difficulty-option.selected {
+            border-color: rgba(0, 255, 255, 0.8);
+            background: rgba(0, 60, 100, 0.5);
+            transform: translateX(10px);
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+
+    <!-- New Game Screen -->
+    <div id="newGameScreen" class="new-game-screen" style="display: none;">
+        <div class="new-game-panel">
+            <h1 style="font-size: 2.5em; margin-bottom: 30px;">NIEUW SPEL</h1>
+
+            <label style="color: #00ffff; font-size: 1.2em; display: block; margin-bottom: 10px;">Commander Naam:</label>
+            <input type="text" id="playerNameInput" placeholder="Voer je naam in..." maxlength="20">
+
+            <label style="color: #00ffff; font-size: 1.2em; display: block; margin: 30px 0 15px 0;">Moeilijkheidsgraad:</label>
+
+            <div class="difficulty-option" onclick="selectDifficulty('easy')" id="diff-easy">
+                <strong style="color: #00ff88; font-size: 1.3em;">🟢 MAKKELIJK</strong><br>
+                <div style="margin-top: 10px; color: #ccc;">
+                    • Start Credits: 100,000¢<br>
+                    • Beginschip: Scout + Trader<br>
+                    • AI Agressie: Laag<br>
+                    • Marktvolatiliteit: Stabiel
+                </div>
+            </div>
+
+            <div class="difficulty-option" onclick="selectDifficulty('normal')" id="diff-normal">
+                <strong style="color: #ffaa00; font-size: 1.3em;">🟡 NORMAAL</strong><br>
+                <div style="margin-top: 10px; color: #ccc;">
+                    • Start Credits: 50,000¢<br>
+                    • Beginschip: Scout<br>
+                    • AI Agressie: Gemiddeld<br>
+                    • Marktvolatiliteit: Dynamisch
+                </div>
+            </div>
+
+            <div class="difficulty-option" onclick="selectDifficulty('hard')" id="diff-hard">
+                <strong style="color: #ff4444; font-size: 1.3em;">🔴 MOEILIJK</strong><br>
+                <div style="margin-top: 10px; color: #ccc;">
+                    • Start Credits: 25,000¢<br>
+                    • Beginschip: Scout (beschadigd)<br>
+                    • AI Agressie: Hoog<br>
+                    • Marktvolatiliteit: Chaotisch
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 40px;">
+                <button class="btn-success" onclick="startNewGame()" style="font-size: 1.3em; padding: 18px 50px;">
+                    🚀 START AVONTUUR
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" id="gameContainer" style="display: none;">
+        <h1>⭐ STELLAR DOMINION ⭐</h1>
+
+        <div style="text-align: center; margin-bottom: 20px;">
+            <button onclick="game.resetGame()" class="btn-danger">🔄 Nieuw Spel</button>
+            <button onclick="game.saveGame()" class="btn-success">💾 Handmatig Opslaan</button>
+        </div>
+
+        <div class="game-grid">
+            <!-- Left Panel -->
+            <div class="panel">
+                <h2>👤 Commandant</h2>
+                <div class="stat-line">
+                    <span class="stat-label">Naam:</span>
+                    <span class="stat-value" id="playerName">Commander</span>
+                </div>
+                <div class="stat-line">
+                    <span class="stat-label">Credits:</span>
+                    <span class="stat-value" id="credits">50000 ¢</span>
+                </div>
+                <div class="stat-line">
+                    <span class="stat-label">Status:</span>
+                    <span class="stat-value" id="repLevel">Nieuweling</span>
+                </div>
+                <div class="stat-line">
+                    <span class="stat-label">Alliantie:</span>
+                    <span class="stat-value" id="allianceStatus">Onafhankelijk</span>
+                </div>
+
+                <h2 style="margin-top: 25px;">🚀 Vloot</h2>
+                <div id="fleetList"></div>
+                <div class="btn-group">
+                    <button class="btn-success" onclick="game.showShipModal('scout')">Scout Info</button>
+                    <button class="btn-success" onclick="game.showShipModal('trader')">Trader Info</button>
+                    <button class="btn-success" onclick="game.showShipModal('frigate')">Fregat Info</button>
+                </div>
+
+                <h2 style="margin-top: 25px;">📦 Cargo Bay</h2>
+                <div id="cargoList"></div>
+                <div class="resource-bar">
+                    <div class="resource-fill" id="cargoBar"></div>
+                </div>
+                <div class="stat-line">
+                    <span class="stat-label">Capaciteit:</span>
+                    <span class="stat-value" id="cargoCapacity">0/100</span>
+                </div>
+            </div>
+
+            <!-- Center Panel -->
+            <div class="panel">
+                <h2>🌍 Locatie: <span id="currentSector">Alpha Prime</span></h2>
+                <div class="sector-info" id="sectorInfo"></div>
+
+                <div class="animation-container" id="animationContainer"></div>
+
+                <h2 style="margin-top: 20px;">⚡ Commando Center</h2>
+                <div class="btn-group">
+                    <button onclick="game.showTrading()">💰 Handel</button>
+                    <button onclick="game.showMissions()">📋 Missies</button>
+                    <button onclick="game.showSectors()">🗺️ Navigatie</button>
+                    <button onclick="game.showManagers()">👔 Managers</button>
+                    <button class="btn-success" onclick="game.scanSector()">🔍 Scan</button>
+                    <button class="btn-danger" onclick="game.buildStation()">🏭 Station (150k)</button>
+                </div>
+
+                <div id="actionPanel"></div>
+
+                <h2 style="margin-top: 20px;">📡 Command Log</h2>
+                <div class="log" id="gameLog"></div>
+            </div>
+
+            <!-- Right Panel -->
+            <div class="panel">
+                <h2>🏛️ Galactische Facties</h2>
+                <div id="factionsList"></div>
+
+                <h2 style="margin-top: 25px;">🤖 AI Handelaars</h2>
+                <div id="aiPlayersList"></div>
+
+                <h2 style="margin-top: 25px;">🌌 Mijn Assets</h2>
+                <div id="stationsList"></div>
+
+                <h2 style="margin-top: 25px;">📊 Carrière Stats</h2>
+                <div class="stat-line">
+                    <span class="stat-label">Tijd:</span>
+                    <span class="stat-value" id="gameTime">Dag 1</span>
+                </div>
+                <div class="stat-line">
+                    <span class="stat-label">Winst:</span>
+                    <span class="stat-value" id="totalProfit">0 ¢</span>
+                </div>
+                <div class="stat-line">
+                    <span class="stat-label">Missies:</span>
+                    <span class="stat-value" id="missionsCompleted">0</span>
+                </div>
+                <div class="stat-line">
+                    <span class="stat-label">Gevechten:</span>
+                    <span class="stat-value" id="battlesWon">0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ship Modal -->
+    <div id="shipModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="game.closeModal()">&times;</span>
+            <div id="shipModalContent"></div>
+        </div>
+    </div>
+
+    <script>
+        let selectedDifficulty = 'normal';
+
+        function selectDifficulty(diff) {
+            selectedDifficulty = diff;
+            document.querySelectorAll('.difficulty-option').forEach(el => el.classList.remove('selected'));
+            document.getElementById('diff-' + diff).classList.add('selected');
+        }
+
+        function startNewGame() {
+            const name = document.getElementById('playerNameInput').value.trim();
+            if (!name) {
+                alert('Voer een naam in!');
+                return;
+            }
+
+            game.initNewGame(name, selectedDifficulty);
+            document.getElementById('newGameScreen').style.display = 'none';
+            document.getElementById('gameContainer').style.display = 'block';
+        }
+
+        // Create stars
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < 100; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 3 + 's';
+            starsContainer.appendChild(star);
+        }
+
+        const game = {
+            player: null,
+            currentSector: 'alphaPrime',
+            gameDay: 1,
+            stats: { totalProfit: 0, missionsCompleted: 0, battlesWon: 0 },
+            stations: [],
+            difficulty: 'normal',
+            alliance: null,
+            aiPlayers: [],
+            managers: [],
+
+            shipData: {
+                scout: {
+                    name: 'Scout Klasse Verkenner',
+                    cost: 25000,
+                    cargo: 50,
+                    combat: 3,
+                    speed: 6,
+                    image: 'https://user-gen-media-assets.s3.amazonaws.com/gpt4o_images/52bbf1e0-a948-4e2a-9cd6-ded68e5ecbd6.png',
+                    description: 'Een snelle en wendbare verkenner perfect voor snelle missies en exploratie.',
+                    advantages: ['Hoogste snelheid', 'Beste voor verkenning', 'Laagste kosten'],
+                    disadvantages: ['Beperkte cargo', 'Zwakke bewapening'],
+                    bestFor: 'Snelle handel, verkenning missies'
+                },
+                trader: {
+                    name: 'Handels Freighter',
+                    cost: 50000,
+                    cargo: 150,
+                    combat: 2,
+                    speed: 4,
+                    image: 'https://user-gen-media-assets.s3.amazonaws.com/gpt4o_images/d8722326-9990-42dc-9c44-ab0a906e785f.png',
+                    description: 'De ruggengraat van interstellaire handel met massieve cargo bays.',
+                    advantages: ['Maximale cargo', 'Best voor winsten', 'Robuust'],
+                    disadvantages: ['Langzaam', 'Zwakke verdediging'],
+                    bestFor: 'Bulk handel, passief inkomen'
+                },
+                frigate: {
+                    name: 'Militair Fregat',
+                    cost: 100000,
+                    cargo: 80,
+                    combat: 10,
+                    speed: 5,
+                    image: 'https://user-gen-media-assets.s3.amazonaws.com/gpt4o_images/f90d75ac-450e-48ca-8b2d-6b7eadd297bf.png',
+                    description: 'Zwaar bewapend gevechtschip voor combat en bescherming.',
+                    advantages: ['Superieure bewapening', 'Zware bepantsering'],
+                    disadvantages: ['Zeer duur', 'Hoge onderhoudskosten'],
+                    bestFor: 'Combat missies, gevaarlijke sectoren'
+                }
+            },
+
+            factions: {
+                federation: {
+                    name: 'Galactische Federatie',
+                    color: '#4444ff',
+                    description: 'Vredesbewaarders en handelaars',
+                    bonuses: { tradePrices: 0.9, missionRewards: 1.1 }
+                },
+                consortium: {
+                    name: 'Handelsconsortium',
+                    color: '#ffaa00',
+                    description: 'Handel en grondstoffen experts',
+                    bonuses: { tradePrices: 0.85, cargoBonus: 1.2 }
+                },
+                alliance: {
+                    name: 'Vrije Alliantie',
+                    color: '#00ff00',
+                    description: 'Onafhankelijke kolonisten',
+                    bonuses: { stationIncome: 1.3, buildCost: 0.85 }
+                },
+                syndicate: {
+                    name: 'Schaduw Syndicaat',
+                    color: '#ff0066',
+                    description: 'Smokkelaars en huursoldaten',
+                    bonuses: { combatBonus: 1.5, illegalTrade: 1.4 }
+                },
+                collective: {
+                    name: 'Tech Collectief',
+                    color: '#aa00ff',
+                    description: 'Wetenschappers en innovators',
+                    bonuses: { scanBonus: 2, techPrices: 0.7 }
+                }
+            },
+
+            sectors: {
+                alphaPrime: {
+                    name: 'Alpha Prime',
+                    controller: 'federation',
+                    danger: 1,
+                    resources: ['water', 'food', 'electronics'],
+                    supply: { water: 100, food: 80, electronics: 50, ore: 30, tech: 20 },
+                    demand: { water: 20, food: 30, electronics: 60, ore: 80, tech: 90 },
+                    basePrices: { water: 100, food: 150, electronics: 500, ore: 200, tech: 800 }
+                },
+                betaOutpost: {
+                    name: 'Beta Outpost',
+                    controller: 'alliance',
+                    danger: 3,
+                    resources: ['ore', 'water'],
+                    supply: { water: 70, food: 30, electronics: 20, ore: 100, tech: 15 },
+                    demand: { water: 40, food: 80, electronics: 70, ore: 10, tech: 85 },
+                    basePrices: { water: 150, food: 200, electronics: 600, ore: 100, tech: 1000 }
+                },
+                gammaHub: {
+                    name: 'Gamma Hub',
+                    controller: 'consortium',
+                    danger: 2,
+                    resources: ['electronics', 'tech', 'food'],
+                    supply: { water: 50, food: 90, electronics: 80, ore: 40, tech: 70 },
+                    demand: { water: 60, food: 20, electronics: 30, ore: 75, tech: 35 },
+                    basePrices: { water: 120, food: 100, electronics: 400, ore: 250, tech: 700 }
+                },
+                deltaVoid: {
+                    name: 'Delta Void',
+                    controller: 'syndicate',
+                    danger: 5,
+                    resources: ['tech', 'ore'],
+                    supply: { water: 20, food: 25, electronics: 40, ore: 85, tech: 80 },
+                    demand: { water: 90, food: 85, electronics: 65, ore: 20, tech: 25 },
+                    basePrices: { water: 200, food: 300, electronics: 800, ore: 150, tech: 600 }
+                },
+                epsilonNexus: {
+                    name: 'Epsilon Nexus',
+                    controller: 'collective',
+                    danger: 2,
+                    resources: ['tech', 'electronics'],
+                    supply: { water: 45, food: 55, electronics: 90, ore: 50, tech: 95 },
+                    demand: { water: 55, food: 50, electronics: 25, ore: 70, tech: 15 },
+                    basePrices: { water: 140, food: 180, electronics: 350, ore: 300, tech: 500 }
+                }
+            },
+
+            missions: [],
+
+            initNewGame(name, difficulty) {
+                this.difficulty = difficulty;
+                let startCredits = 50000;
+                let startFleet = [{type: 'scout', name: 'SS Explorer', cargo: 50, combat: 3, speed: 6}];
+
+                if (difficulty === 'easy') {
+                    startCredits = 100000;
+                    startFleet.push({type: 'trader', name: 'SS Merchant', cargo: 150, combat: 2, speed: 4});
+                } else if (difficulty === 'hard') {
+                    startCredits = 25000;
+                    startFleet[0].combat = 1;
+                }
+
+                this.player = {
+                    name: name,
+                    credits: startCredits,
+                    cargo: {},
+                    maxCargo: 100,
+                    reputation: {},
+                    fleet: startFleet
+                };
+
+                Object.keys(this.factions).forEach(f => this.player.reputation[f] = 50);
+
+                this.generateAIPlayers();
+                this.generateMissions();
+                this.updateUI();
+                this.saveGame();
+                this.log(`Welkom ${name}! Je avontuur begint nu.`, 'neutral');
+
+                if (!this.gameLoopInterval) {
+                    this.gameLoopInterval = setInterval(() => this.gameLoop(), 3000);
+                }
+            },
+
+            init() {
+                const saved = localStorage.getItem('stellarDominion');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    this.player = data.player;
+                    this.currentSector = data.currentSector;
+                    this.gameDay = data.gameDay;
+                    this.stats = data.stats;
+                    this.stations = data.stations || [];
+                    this.difficulty = data.difficulty || 'normal';
+                    this.alliance = data.alliance || null;
+                    this.managers = data.managers || [];
+                    this.aiPlayers = data.aiPlayers || [];
+
+                    if (this.aiPlayers.length === 0) this.generateAIPlayers();
+
+                    this.generateMissions();
+                    this.updateUI();
+                    document.getElementById('gameContainer').style.display = 'block';
+                    this.log('Welkom terug, Commander!', 'neutral');
+
+                    if (!this.gameLoopInterval) {
+                        this.gameLoopInterval = setInterval(() => this.gameLoop(), 3000);
+                    }
+                } else {
+                    document.getElementById('newGameScreen').style.display = 'flex';
+                    selectDifficulty('normal');
+                }
+            },
+
+            saveGame() {
+                const data = {
+                    player: this.player,
+                    currentSector: this.currentSector,
+                    gameDay: this.gameDay,
+                    stats: this.stats,
+                    stations: this.stations,
+                    difficulty: this.difficulty,
+                    alliance: this.alliance,
+                    managers: this.managers,
+                    aiPlayers: this.aiPlayers
+                };
+                localStorage.setItem('stellarDominion', JSON.stringify(data));
+                this.log('Spel opgeslagen', 'neutral');
+            },
+
+            resetGame() {
+                if (confirm('Weet je zeker dat je een nieuw spel wilt starten? Alle voortgang gaat verloren.')) {
+                    localStorage.removeItem('stellarDominion');
+                    location.reload();
+                }
+            },
+
+            generateAIPlayers() {
+                const names = ['Kapitein Vex', 'Commander Zara', 'Admiral Kron', 'Pilot Nexus', 'Trader Lyra'];
+                this.aiPlayers = names.map((name, i) => ({
+                    name: name,
+                    credits: 30000 + Math.random() * 50000,
+                    sector: Object.keys(this.sectors)[Math.floor(Math.random() * 5)],
+                    aggression: Math.random(),
+                    tradingStyle: Math.random() > 0.5 ? 'aggressive' : 'passive'
+                }));
+            },
+
+            gameLoop() {
+                this.gameDay++;
+
+                // AI Actions
+                this.aiPlayers.forEach(ai => {
+                    if (Math.random() > 0.7) {
+                        const sectorKeys = Object.keys(this.sectors);
+                        ai.sector = sectorKeys[Math.floor(Math.random() * sectorKeys.length)];
+                    }
+
+                    if (ai.sector === this.currentSector && Math.random() > 0.8) {
+                        this.aiTrade(ai);
+                    }
+                });
+
+                // Manager automation
+                this.managers.forEach(manager => {
+                    if (manager.active && manager.station) {
+                        const station = this.stations.find(s => s.name === manager.station);
+                        if (station) {
+                            const bonus = Math.floor(station.income * 0.3);
+                            this.player.credits += bonus;
+                            this.stats.totalProfit += bonus;
+                        }
+                    }
+                });
+
+                // Update economy based on supply/demand
+                this.updateEconomy();
+
+                if (this.gameDay % 5 === 0) this.generateMissions();
+                if (this.gameDay % 10 === 0) this.randomEvent();
+                if (this.gameDay % 3 === 0) this.saveGame();
+
+                this.updateUI();
+            },
+
+            updateEconomy() {
+                Object.keys(this.sectors).forEach(sectorKey => {
+                    const sector = this.sectors[sectorKey];
+                    Object.keys(sector.basePrices).forEach(resource => {
+                        const supply = sector.supply[resource];
+                        const demand = sector.demand[resource];
+                        const ratio = demand / (supply + 1);
+                        sector.basePrices[resource] = Math.floor(sector.basePrices[resource] * (0.95 + ratio * 0.1));
+
+                        // Adjust supply/demand slightly
+                        sector.supply[resource] = Math.max(10, sector.supply[resource] + Math.floor((Math.random() - 0.5) * 10));
+                        sector.demand[resource] = Math.max(10, sector.demand[resource] + Math.floor((Math.random() - 0.5) * 10));
+                    });
+                });
+            },
+
+            aiTrade(ai) {
+                const sector = this.sectors[ai.sector];
+                const resources = Object.keys(sector.basePrices);
+                const resource = resources[Math.floor(Math.random() * resources.length)];
+                const amount = Math.floor(Math.random() * 20) + 5;
+
+                if (ai.tradingStyle === 'aggressive') {
+                    sector.demand[resource] += amount;
+                    this.log(`${ai.name} koopt ${resource} in ${sector.name}`, 'warning');
+                } else {
+                    sector.supply[resource] += amount;
+                }
+            },
+
+            joinAlliance(factionId) {
+                if (this.alliance === factionId) {
+                    this.log('Je bent al lid van deze factie!', 'warning');
+                    return;
+                }
+
+                if (this.alliance) {
+                    this.player.reputation[this.alliance] = Math.max(0, this.player.reputation[this.alliance] - 30);
+                    this.log(`Je hebt ${this.factions[this.alliance].name} verlaten! -30 reputatie`, 'negative');
+                }
+
+                this.alliance = factionId;
+                this.player.reputation[factionId] = Math.min(100, this.player.reputation[factionId] + 20);
+                this.log(`Je bent nu lid van ${this.factions[factionId].name}! +20 reputatie`, 'positive');
+                this.generateMissions();
+                this.saveGame();
+                this.updateUI();
+            },
+
+            leaveAlliance() {
+                if (!this.alliance) return;
+                this.player.reputation[this.alliance] -= 20;
+                this.log(`Je hebt ${this.factions[this.alliance].name} verlaten!`, 'warning');
+                this.alliance = null;
+                this.saveGame();
+                this.updateUI();
+            },
+
+            showManagers() {
+                const panel = document.getElementById('actionPanel');
+                panel.innerHTML = `
+                    <h2 style="margin-top: 20px;">👔 Manager Systeem</h2>
+                    <p style="color: #ccc; margin-bottom: 15px;">Huur managers om je stations automatisch te laten beheren</p>
+
+                    ${this.managers.length === 0 ? '<p style="text-align: center; color: #888;">Geen managers</p>' :
+                    this.managers.map((m, i) => `
+                        <div class="manager-item">
+                            <strong style="color: #aa00ff;">${m.name}</strong><br>
+                            Station: ${m.station || 'Niet toegewezen'}<br>
+                            Bonus: +30% inkomen<br>
+                            <button class="btn-danger" onclick="game.fireManager(${i})">Ontslaan</button>
+                        </div>
+                    `).join('')}
+
+                    <h3 style="color: #00ffff; margin-top: 25px;">Beschikbare Managers</h3>
+                    <div class="manager-item">
+                        <strong>Senior Manager</strong><br>
+                        +30% station inkomen<br>
+                        <button class="btn-success" onclick="game.hireManager()">Huren (50k¢)</button>
+                    </div>
+                `;
+            },
+
+            hireManager() {
+                if (this.player.credits < 50000) return this.log('Niet genoeg credits!', 'negative');
+                if (this.stations.length === 0) return this.log('Je hebt geen stations!', 'negative');
+
+                this.player.credits -= 50000;
+                const station = this.stations[0];
+                this.managers.push({
+                    name: 'Manager ' + (this.managers.length + 1),
+                    station: station.name,
+                    active: true
+                });
+
+                this.log('Manager ingehuurd!', 'positive');
+                this.saveGame();
+                this.showManagers();
+            },
+
+            fireManager(idx) {
+                this.managers.splice(idx, 1);
+                this.log('Manager ontslagen', 'warning');
+                this.saveGame();
+                this.showManagers();
+            },
+
+            log(message, type = 'neutral') {
+                const log = document.getElementById('gameLog');
+                const entry = document.createElement('div');
+                entry.className = `log-entry log-${type}`;
+                entry.textContent = `[Dag ${this.gameDay}] ${message}`;
+                log.insertBefore(entry, log.firstChild);
+                if (log.children.length > 50) log.removeChild(log.lastChild);
+            },
+
+            updateUI() {
+                if (!this.player) return;
+
+                document.getElementById('playerName').textContent = this.player.name;
+                document.getElementById('credits').textContent = `${this.player.credits.toLocaleString()} ¢`;
+                document.getElementById('gameTime').textContent = `Dag ${this.gameDay}`;
+                document.getElementById('totalProfit').textContent = `${this.stats.totalProfit.toLocaleString()} ¢`;
+                document.getElementById('missionsCompleted').textContent = this.stats.missionsCompleted;
+                document.getElementById('battlesWon').textContent = this.stats.battlesWon;
+                document.getElementById('currentSector').textContent = this.sectors[this.currentSector].name;
+                document.getElementById('allianceStatus').textContent = this.alliance ? this.factions[this.alliance].name : 'Onafhankelijk';
+
+                const repPoints = Object.values(this.player.reputation).reduce((a,b)=>a+b,0) / Object.keys(this.player.reputation).length;
+                const repLevel = repPoints < 30 ? 'Vijand' : repPoints < 50 ? 'Onbekend' : repPoints < 70 ? 'Bekend' : repPoints < 85 ? 'Gerespecteerd' : 'Legende';
+                document.getElementById('repLevel').textContent = repLevel;
+
+                this.updateFleet();
+                this.updateCargo();
+                this.updateFactions();
+                this.updateSectorInfo();
+                this.updateStations();
+                this.updateAIPlayers();
+            },
+
+            updateFleet() {
+                const list = document.getElementById('fleetList');
+                list.innerHTML = this.player.fleet.map(ship => 
+                    `<div class="ship-item">
+                        <strong style="color: #00ffff; font-size: 1.1em;">${ship.name}</strong><br>
+                        <div style="margin-top: 8px; display: flex; gap: 15px;">
+                            <span>⚔️ ${ship.combat}</span>
+                            <span>💨 ${ship.speed}</span>
+                            <span>📦 ${ship.cargo}</span>
+                        </div>
+                    </div>`
+                ).join('');
+            },
+
+            updateCargo() {
+                const list = document.getElementById('cargoList');
+                const total = Object.values(this.player.cargo).reduce((a,b)=>a+b,0);
+                const max = this.player.fleet.reduce((a,b)=>a+b.cargo,0);
+                this.player.maxCargo = max;
+
+                const cargoItems = Object.entries(this.player.cargo).map(([item, qty]) => 
+                    `<div class="stat-line"><span>${item}</span><span>${qty}</span></div>`
+                ).join('') || '<div style="color: #888; text-align: center; padding: 20px;">Cargo leeg</div>';
+                list.innerHTML = cargoItems;
+
+                document.getElementById('cargoCapacity').textContent = `${total}/${max}`;
+                document.getElementById('cargoBar').style.width = `${Math.min((total/max)*100, 100)}%`;
+            },
+
+            updateFactions() {
+                const list = document.getElementById('factionsList');
+                list.innerHTML = Object.entries(this.factions).map(([id, faction]) => {
+                    const rep = this.player.reputation[id];
+                    const repColor = rep < 30 ? '#ff4444' : rep < 50 ? '#ffaa00' : rep < 70 ? '#88ffff' : '#00ff88';
+                    const isAllied = this.alliance === id;
+                    return `<div class="faction faction-${id}">
+                        ${isAllied ? '<div class="allied-badge">⭐ ALLIED</div>' : ''}
+                        <strong style="color: ${faction.color}; font-size: 1.1em;">${faction.name}</strong><br>
+                        <small style="color: #aaa;">${faction.description}</small>
+                        <div class="reputation-meter">
+                            <div class="reputation-fill" style="width: ${rep}%; background: ${repColor};"></div>
+                        </div>
+                        <small style="color: ${repColor};">Rep: ${rep}/100</small><br>
+                        ${!isAllied ? `<button onclick="game.joinAlliance('${id}')" style="margin-top: 8px; padding: 8px 16px;">Aansluiten</button>` :
+                        `<button class="btn-danger" onclick="game.leaveAlliance()" style="margin-top: 8px; padding: 8px 16px;">Verlaten</button>`}
+                    </div>`;
+                }).join('');
+            },
+
+            updateAIPlayers() {
+                const list = document.getElementById('aiPlayersList');
+                list.innerHTML = this.aiPlayers.map(ai => 
+                    `<div class="ai-player">
+                        <strong>${ai.name}</strong><br>
+                        📍 ${this.sectors[ai.sector].name}<br>
+                        ${ai.sector === this.currentSector ? '⚠️ IN SECTOR' : ''}
+                    </div>`
+                ).join('');
+            },
+
+            updateSectorInfo() {
+                const sector = this.sectors[this.currentSector];
+                const faction = this.factions[sector.controller];
+                const danger = '⚠️'.repeat(sector.danger);
+                const aiHere = this.aiPlayers.filter(ai => ai.sector === this.currentSector);
+                document.getElementById('sectorInfo').innerHTML = `
+                    <strong>Controle:</strong> <span style="color: ${faction.color};">${faction.name}</span><br>
+                    <strong>Gevaar:</strong> ${danger || '✅ Veilig'}<br>
+                    <strong>Export:</strong> ${sector.resources.join(', ')}<br>
+                    <strong>AI Traders:</strong> ${aiHere.length} aanwezig
+                `;
+            },
+
+            updateStations() {
+                const list = document.getElementById('stationsList');
+                list.innerHTML = this.stations.length === 0 ? '<div style="color: #888; text-align: center; padding: 20px;">Geen assets</div>' :
+                    this.stations.map(station => {
+                        const manager = this.managers.find(m => m.station === station.name);
+                        return `<div class="sector-info">
+                            <strong style="color: #00ffff;">${station.name}</strong><br>
+                            📍 ${this.sectors[station.sector].name}<br>
+                            💰 ${station.income}¢/dag<br>
+                            ${manager ? '👔 Manager actief (+30%)' : ''}
+                        </div>`;
+                    }).join('');
+            },
+
+            showShipModal(shipType) {
+                const ship = this.shipData[shipType];
+                const modal = document.getElementById('shipModal');
+                const content = document.getElementById('shipModalContent');
+
+                content.innerHTML = `
+                    <h2 style="font-family: Orbitron; color: #00ffff; font-size: 2em; margin-bottom: 20px;">${ship.name}</h2>
+                    <img src="${ship.image}" alt="${ship.name}" class="ship-modal-image">
+
+                    <div class="ship-stats">
+                        <div class="ship-stat">
+                            <div class="ship-stat-value">${ship.cargo}</div>
+                            <div class="ship-stat-label">📦 CARGO</div>
+                        </div>
+                        <div class="ship-stat">
+                            <div class="ship-stat-value">${ship.combat}</div>
+                            <div class="ship-stat-label">⚔️ COMBAT</div>
+                        </div>
+                        <div class="ship-stat">
+                            <div class="ship-stat-value">${ship.speed}</div>
+                            <div class="ship-stat-label">💨 SNELHEID</div>
+                        </div>
+                    </div>
+
+                    <div style="margin: 25px 0;">
+                        <h3 style="color: #00ffff; margin-bottom: 15px;">📋 Beschrijving</h3>
+                        <p style="line-height: 1.8; color: #ccc;">${ship.description}</p>
+                    </div>
+
+                    <div style="margin: 25px 0;">
+                        <h3 style="color: #00ff88; margin-bottom: 15px;">✅ Voordelen</h3>
+                        <ul style="list-style: none; padding: 0;">
+                            ${ship.advantages.map(adv => `<li style="padding: 8px 0; color: #88ffaa;">• ${adv}</li>`).join('')}
+                        </ul>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 30px;">
+                        <div style="font-size: 2em; color: #ffcc00; margin-bottom: 20px;">
+                            💰 ${ship.cost.toLocaleString()} Credits
+                        </div>
+                        <button class="btn-success" onclick="game.buyShip('${shipType}')" style="font-size: 1.2em; padding: 15px 40px;">
+                            🚀 KOOP SCHIP
+                        </button>
+                    </div>
+                `;
+
+                modal.style.display = 'flex';
+            },
+
+            closeModal() {
+                document.getElementById('shipModal').style.display = 'none';
+            },
+
+            showAnimation(type) {
+                const container = document.getElementById('animationContainer');
+                container.innerHTML = '';
+
+                if (type === 'trading') {
+                    container.innerHTML = '<div class="trading-animation"></div>';
+                } else if (type === 'scanning') {
+                    container.innerHTML = '<div class="scanning-animation"></div>';
+                } else if (type === 'travel') {
+                    container.innerHTML = '<div class="travel-animation"></div>';
+                } else if (type === 'building') {
+                    container.innerHTML = '<div class="building-animation"></div>';
+                }
+            },
+
+            showTrading() {
+                this.showAnimation('trading');
+                const sector = this.sectors[this.currentSector];
+                const resources = ['water', 'food', 'electronics', 'ore', 'tech'];
+                const panel = document.getElementById('actionPanel');
+                panel.innerHTML = `<h2 style="margin-top: 20px;">💱 Handelsmarkt - ${sector.name}</h2>` +
+                    resources.map(res => {
+                        const basePrice = sector.basePrices[res];
+                        const supply = sector.supply[res];
+                        const demand = sector.demand[res];
+                        const price = Math.floor(basePrice * (demand / (supply + 1)));
+                        const owned = this.player.cargo[res] || 0;
+                        return `<div class="trade-item">
+                            <div>
+                                <strong style="color: #00ffff; font-size: 1.1em;">${res.toUpperCase()}</strong><br>
+                                <small style="color: #888;">Cargo: ${owned} | Vraag: ${demand} | Aanbod: ${supply}</small>
+                            </div>
+                            <div>
+                                <button class="btn-success" onclick="game.trade('${res}', -10)">Koop 10<br>${(price*10).toLocaleString()}¢</button>
+                                <button class="btn-danger" onclick="game.trade('${res}', 10)">Verkoop 10<br>${(price*10).toLocaleString()}¢</button>
+                            </div>
+                        </div>`;
+                    }).join('');
+            },
+
+            trade(resource, amount) {
+                const sector = this.sectors[this.currentSector];
+                const basePrice = sector.basePrices[resource];
+                const price = Math.floor(basePrice * (sector.demand[resource] / (sector.supply[resource] + 1)));
+                const cost = price * Math.abs(amount);
+                const currentCargo = Object.values(this.player.cargo).reduce((a,b)=>a+b,0);
+
+                if (amount < 0) {
+                    if (this.player.credits < cost) return this.log('Niet genoeg credits!', 'negative');
+                    if (currentCargo + Math.abs(amount) > this.player.maxCargo) return this.log('Cargo vol!', 'negative');
+                    this.player.credits -= cost;
+                    this.player.cargo[resource] = (this.player.cargo[resource] || 0) + Math.abs(amount);
+                    sector.supply[resource] -= Math.abs(amount);
+                    sector.demand[resource] += Math.floor(Math.abs(amount) * 0.5);
+                    this.log(`Gekocht: ${Math.abs(amount)}x ${resource}`, 'positive');
+                } else {
+                    if (!this.player.cargo[resource] || this.player.cargo[resource] < amount) return this.log('Niet genoeg!', 'negative');
+                    this.player.credits += cost;
+                    this.player.cargo[resource] -= amount;
+                    if (this.player.cargo[resource] === 0) delete this.player.cargo[resource];
+                    sector.supply[resource] += amount;
+                    sector.demand[resource] -= Math.floor(amount * 0.5);
+                    this.stats.totalProfit += cost;
+                    this.log(`Verkocht: ${amount}x ${resource}`, 'positive');
+                }
+                this.saveGame();
+                this.updateUI();
+                this.showTrading();
+            },
+
+            showMissions() {
+                this.showAnimation('scanning');
+                const panel = document.getElementById('actionPanel');
+                panel.innerHTML = `<h2 style="margin-top: 20px;">📋 Missie Board</h2>` +
+                    (this.missions.length === 0 ? '<p style="text-align: center; color: #888; padding: 30px;">Geen missies</p>' :
+                    this.missions.map((mission, idx) => {
+                        const isAllyMission = this.alliance === mission.faction;
+                        const isEnemyMission = this.alliance && this.alliance !== mission.faction;
+                        return `<div class="mission" style="${isEnemyMission ? 'border-color: #ff4444;' : ''}">
+                            <strong style="color: ${this.factions[mission.faction].color}; font-size: 1.2em;">
+                                ${mission.title} ${isAllyMission ? '⭐' : ''}
+                            </strong><br>
+                            <p style="margin: 10px 0; color: #ccc;">${mission.description}</p>
+                            <div style="color: #00ff88; font-weight: bold; margin: 10px 0;">
+                                💰 ${mission.reward.toLocaleString()}¢ | ⭐ +${mission.repGain} rep
+                            </div>
+                            ${isEnemyMission ? '<p style="color: #ff4444;">⚠️ Dit verbreekt je alliantie!</p>' : ''}
+                            <button class="btn-success" onclick="game.acceptMission(${idx})">Accepteer</button>
+                        </div>`;
+                    }).join(''));
+            },
+
+            generateMissions() {
+                this.missions = [];
+                const missionTypes = [
+                    { title: 'Handelsmissie', desc: 'Lever goederen in {sector}', type: 'delivery' },
+                    { title: 'Escorte', desc: 'Bescherm transport naar {sector}', type: 'escort' },
+                    { title: 'Verkenning', desc: 'Scan {sector}', type: 'scan' },
+                    { title: 'Beveiliging', desc: 'Elimineer piraten in {sector}', type: 'combat' }
+                ];
+
+                const numMissions = this.alliance ? 5 : 3;
+
+                for (let i = 0; i < numMissions; i++) {
+                    const template = missionTypes[Math.floor(Math.random() * missionTypes.length)];
+                    let factionId = Object.keys(this.factions)[Math.floor(Math.random() * Object.keys(this.factions).length)];
+
+                    if (this.alliance && i < 2) factionId = this.alliance;
+
+                    const sectorId = Object.keys(this.sectors)[Math.floor(Math.random() * Object.keys(this.sectors).length)];
+
+                    this.missions.push({
+                        title: template.title,
+                        description: template.desc.replace('{sector}', this.sectors[sectorId].name),
+                        reward: Math.floor(Math.random() * 30000) + 15000,
+                        repGain: Math.floor(Math.random() * 20) + 10,
+                        faction: factionId,
+                        type: template.type
+                    });
+                }
+            },
+
+            acceptMission(idx) {
+                const mission = this.missions[idx];
+
+                if (this.alliance && this.alliance !== mission.faction) {
+                    this.player.reputation[this.alliance] = Math.max(0, this.player.reputation[this.alliance] - 25);
+                    this.log(`Alliantie beschadigd! -25 rep bij ${this.factions[this.alliance].name}`, 'negative');
+                }
+
+                const success = Math.random() > 0.25;
+
+                if (success) {
+                    this.player.credits += mission.reward;
+                    this.player.reputation[mission.faction] = Math.min(100, this.player.reputation[mission.faction] + mission.repGain);
+                    this.stats.missionsCompleted++;
+                    if (mission.type === 'combat') this.stats.battlesWon++;
+                    this.log(`✅ Missie succesvol! +${mission.reward.toLocaleString()}¢`, 'positive');
+                } else {
+                    this.log(`❌ Missie mislukt!`, 'negative');
+                }
+
+                this.missions.splice(idx, 1);
+                this.saveGame();
+                this.updateUI();
+                this.showMissions();
+            },
+
+            showSectors() {
+                this.showAnimation('travel');
+                const panel = document.getElementById('actionPanel');
+                panel.innerHTML = `<h2 style="margin-top: 20px;">🗺️ Navigatie</h2>` +
+                    Object.entries(this.sectors).map(([id, sector]) => 
+                        `<div class="sector-info">
+                            <strong style="color: #00ffff; font-size: 1.2em;">${sector.name}</strong><br>
+                            <div style="margin: 10px 0;">
+                                Controle: <span style="color: ${this.factions[sector.controller].color};">${this.factions[sector.controller].name}</span><br>
+                                Gevaar: ${'⚠️'.repeat(sector.danger) || '✅'}
+                            </div>
+                            <button onclick="game.travel('${id}')" ${id === this.currentSector ? 'disabled' : ''}>
+                                ${id === this.currentSector ? '📍 Huidige Locatie' : '🚀 Reis (500¢)'}
+                            </button>
+                        </div>`
+                    ).join('');
+            },
+
+            travel(sectorId) {
+                if (this.player.credits < 500) return this.log('Niet genoeg credits!', 'negative');
+                this.player.credits -= 500;
+                this.currentSector = sectorId;
+                const sector = this.sectors[sectorId];
+
+                this.showAnimation('travel');
+
+                const aiInSector = this.aiPlayers.filter(ai => ai.sector === sectorId);
+                const hostileAI = aiInSector.find(ai => ai.aggression > 0.7 && Math.random() > 0.5);
+
+                if (hostileAI) {
+                    const damage = Math.floor(Math.random() * 8000) + 2000;
+                    this.player.credits -= damage;
+                    this.log(`⚔️ ${hostileAI.name} valt aan! -${damage.toLocaleString()}¢`, 'negative');
+                } else if (Math.random() < sector.danger * 0.08) {
+                    const damage = Math.floor(Math.random() * 5000) + 1000;
+                    this.player.credits -= damage;
+                    this.log(`⚔️ Piraten! -${damage.toLocaleString()}¢`, 'negative');
+                } else {
+                    this.log(`🚀 Veilig in ${sector.name}`, 'neutral');
+                }
+
+                this.saveGame();
+                this.updateUI();
+            },
+
+            scanSector() {
+                if (this.player.credits < 1000) return this.log('Scan kost 1000¢!', 'negative');
+                this.player.credits -= 1000;
+                this.showAnimation('scanning');
+
+                const findings = [
+                    { msg: 'Wrakstukken! +5000¢', credits: 5000 },
+                    { msg: 'Anomalie! +5 rep', rep: 5 },
+                    { msg: 'Ore deposit! +15 ore', cargo: {ore: 15} },
+                    { msg: 'Niets gevonden' }
+                ];
+                const finding = findings[Math.floor(Math.random() * findings.length)];
+
+                if (finding.credits) this.player.credits += finding.credits;
+                if (finding.rep) this.player.reputation[this.sectors[this.currentSector].controller] += finding.rep;
+                if (finding.cargo) {
+                    Object.entries(finding.cargo).forEach(([item, qty]) => {
+                        this.player.cargo[item] = (this.player.cargo[item] || 0) + qty;
+                    });
+                }
+
+                this.log(`🔍 ${finding.msg}`, 'warning');
+                this.saveGame();
+                this.updateUI();
+            },
+
+            buildStation() {
+                if (this.player.credits < 150000) return this.log('Station kost 150k!', 'negative');
+                this.player.credits -= 150000;
+                this.showAnimation('building');
+
+                const names = ['Alpha Station', 'Nova Complex', 'Stellar Hub'];
+                const name = names[Math.floor(Math.random() * names.length)] + ' ' + (this.stations.length + 1);
+                const income = Math.floor(Math.random() * 4000) + 2000;
+
+                this.stations.push({
+                    name: name,
+                    sector: this.currentSector,
+                    income: income
+                });
+
+                setInterval(() => {
+                    if (this.player) {
+                        this.player.credits += income;
+                        this.stats.totalProfit += income;
+                    }
+                }, 10000);
+
+                this.log(`🏭 ${name} gebouwd! +${income.toLocaleString()}¢/dag`, 'positive');
+                this.saveGame();
+                this.updateUI();
+            },
+
+            buyShip(type) {
+                const ship = this.shipData[type];
+                if (this.player.credits < ship.cost) return this.log('Niet genoeg credits!', 'negative');
+
+                this.player.credits -= ship.cost;
+                this.player.fleet.push({
+                    type: type,
+                    name: `${ship.name} ${this.player.fleet.length + 1}`,
+                    cargo: ship.cargo,
+                    combat: ship.combat,
+                    speed: ship.speed
+                });
+
+                this.log(`🚀 ${ship.name} toegevoegd!`, 'positive');
+                this.closeModal();
+                this.saveGame();
+                this.updateUI();
+            },
+
+            randomEvent() {
+                const events = [
+                    { msg: 'Marktcrash! Prijzen dalen', effect: () => {
+                        Object.keys(this.sectors).forEach(s => {
+                            Object.keys(this.sectors[s].basePrices).forEach(r => {
+                                this.sectors[s].basePrices[r] = Math.floor(this.sectors[s].basePrices[r] * 0.85);
+                            });
+                        });
+                    }},
+                    { msg: 'Handelsboom! Prijzen stijgen', effect: () => {
+                        Object.keys(this.sectors).forEach(s => {
+                            Object.keys(this.sectors[s].basePrices).forEach(r => {
+                                this.sectors[s].basePrices[r] = Math.floor(this.sectors[s].basePrices[r] * 1.15);
+                            });
+                        });
+                    }},
+                    { msg: 'Bonus! +15k¢', effect: () => { this.player.credits += 15000; }},
+                    { msg: 'AI vloot verplaatst', effect: () => {
+                        this.aiPlayers.forEach(ai => {
+                            ai.sector = Object.keys(this.sectors)[Math.floor(Math.random() * 5)];
+                        });
+                    }}
+                ];
+
+                const event = events[Math.floor(Math.random() * events.length)];
+                event.effect();
+                this.log(`🌟 ${event.msg}`, 'warning');
+            }
+        };
+
+        window.onload = () => game.init();
+
+        window.onclick = (e) => {
+            const modal = document.getElementById('shipModal');
+            if (e.target === modal) game.closeModal();
+        };
+    </script>
+</body>
+</html>
